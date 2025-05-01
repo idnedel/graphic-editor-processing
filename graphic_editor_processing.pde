@@ -82,17 +82,17 @@ public void draw() {
     text("Círculo", 15, 325);
 
     // configurações do quadrado    
-    text("R", 10, 75);
-    text("G", 10, 125);
-    text("B", 10, 175);
-    text("L", 10, 225);
-    text("A", 10, 275);
+    text("R", 15, 75);
+    text("G", 15, 125);
+    text("B", 15, 175);
+    text("L", 15, 225);
+    text("A", 15, 275);
 
     // configurações do círculo
-    text("R", 10, 375);
-    text("G", 10, 425);
-    text("B", 10, 475);
-    text("D", 10, 525);
+    text("R", 15, 375);
+    text("G", 15, 425);
+    text("B", 15, 475);
+    text("D", 15, 525);
 
     // desenha a linha divisória entre as configurações e a área de desenho
     line(180, 0, 180, height);
