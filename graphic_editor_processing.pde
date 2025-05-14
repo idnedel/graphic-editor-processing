@@ -1,6 +1,8 @@
 // lista com as TextBox aceitas na janela principal
 private ArrayList<TextBox> textboxes = new ArrayList<TextBox>();
 
+int drawMode = 0;
+
 // lista de quadrados/retangulos pelo TextBox
 TextBox rSquare; // Red 
 TextBox gSquare; // Green
@@ -16,11 +18,18 @@ TextBox bCircle; // Blue
 TextBox dCircle; // Diametro
 TextBox strokeCircle; // Espessura
 
+TextBox rTriangle; // Red
+TextBox gTriangle; // Green
+TextBox bTriangle; // Blue
+TextBox sizeTriangle; // Tamanho lado
+TextBox strokeTriangle; // Espessura
+
 // botao de limpar tela
 TextBox clearButton;
 
 // identificar se está desenhando círculos ou quadrados
 boolean drawCircle = false;
+boolean drawTriangle = false;
 
 // config iniciais para o editor gráfico.
 public void setup() {
@@ -28,12 +37,13 @@ public void setup() {
     background(255);
 
     // config comuns para todas as TextBoxes
-    final int textBoxWidth = 70;
+    final int textBoxWidth = 50;
     final int textBoxHeight = 40;
     final int startY = height - 100;
     final int squareStartX = 50;
-    final int circleStartX = 700;
-    final int xIncrement = 100;
+    final int circleStartX = 450;
+    final int triangleStartX = 790;
+    final int xIncrement = 60;
 
     // cria TextBox para o quadrado/retangulo
     for (int i = 0; i < 5; i++) {
@@ -72,9 +82,26 @@ public void setup() {
         }
     }
     
+        // Cria TextBoxes para o triângulo
+    for (int i = 0; i < 4; i++) {
+        TextBox tb = new TextBox();
+        tb.X = triangleStartX + i * xIncrement;
+        tb.Y = startY;
+        tb.W = textBoxWidth;
+        tb.H = textBoxHeight;
+        textboxes.add(tb);
+        
+        switch(i) {
+            case 0: rTriangle = tb; break;
+            case 1: gTriangle = tb; break;
+            case 2: bTriangle = tb; break;
+            case 3: sizeTriangle = tb; break;
+        }
+    }
+    
     // TextBox para espessura do quadrado
       strokeSquare = new TextBox();
-      strokeSquare.X = 550;
+      strokeSquare.X = 350;
       strokeSquare.Y = startY;
       strokeSquare.W = textBoxWidth;
       strokeSquare.H = textBoxHeight;
@@ -83,16 +110,25 @@ public void setup() {
 
       // TextBox para espessura do círculo
       strokeCircle = new TextBox();
-      strokeCircle.X = 1105;
+      strokeCircle.X = 690;
       strokeCircle.Y = startY;
       strokeCircle.W = textBoxWidth;
       strokeCircle.H = textBoxHeight;
       strokeCircle.Text = "1";
       textboxes.add(strokeCircle);
       
+      // TextBox para espessura do triângulo
+      strokeTriangle = new TextBox();
+      strokeTriangle.X = 1030;
+      strokeTriangle.Y = startY;
+      strokeTriangle.W = textBoxWidth;
+      strokeTriangle.H = textBoxHeight;
+      strokeTriangle.Text = "1";
+      textboxes.add(strokeTriangle);
+      
       clearButton = new TextBox();
-      clearButton.X = width - 136;
-      clearButton.Y = height - 195;
+      clearButton.X = width - 155;
+      clearButton.Y = height - 100;
       clearButton.W = 130;
       clearButton.H = 38;
       clearButton.Text = "Limpar Tela";
@@ -110,19 +146,27 @@ public void draw() {
     fill(0);
     text("Quadrado", 50, height - 120);
     text("R", 55, height - 35);
-    text("G", 155, height - 35);
-    text("B", 255, height - 35);
-    text("L", 355, height - 35);
-    text("A", 455, height - 35);
-    text("Espessura", 550, height - 35);
+    text("G", 115, height - 35);
+    text("B", 175, height - 35);
+    text("L", 235, height - 35);
+    text("A", 295, height - 35);
+    text("Espessura", 355, height - 35);
     
     // configurações do círculo
-    text("Círculo", 700, height - 120);
-    text("R", 705, height - 35);
-    text("G", 805, height - 35);
-    text("B", 905, height - 35);
-    text("D", 1005, height - 35);
-    text("Espessura", 1105, height - 35);
+    text("Círculo", 450, height - 120);
+    text("R", 455, height - 35);
+    text("G", 515, height - 35);
+    text("B", 575, height - 35);
+    text("D", 635, height - 35);
+    text("Espessura", 695, height - 35);
+    
+    // Configurações do triângulo
+    text("Triângulo", 790, height - 120);
+    text("R", 795, height - 35);
+    text("G", 855, height - 35);
+    text("B", 915, height - 35);
+    text("T", 975, height - 35);
+    text("Espessura", 1035, height - 35);
 
     // desenha as TextBox de configurações
     for (TextBox t : textboxes) {
@@ -131,8 +175,9 @@ public void draw() {
 }
 
 private void clearCanvas() {
+    // Limpa apenas a área de desenho (direita da linha divisória)
     for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height - 0; y++) {
+        for (int y = 0; y < height - 150; y++) {
             set(x, y, color(255));
         }
     }
@@ -146,10 +191,16 @@ public void mousePressed() {
         return;
     }
     
+    // Verifica qual forma está selecionada
     if (rCircle.selected || gCircle.selected || bCircle.selected || dCircle.selected || strokeCircle.selected) {
         drawCircle = true;
+        drawTriangle = false; // Adicionado
+    } else if (rTriangle.selected || gTriangle.selected || bTriangle.selected || sizeTriangle.selected || strokeTriangle.selected) {
+        drawCircle = false;
+        drawTriangle = true; // Adicionado
     } else if (rSquare.selected || gSquare.selected || bSquare.selected || wSquare.selected || hSquare.selected || strokeSquare.selected) {
         drawCircle = false;
+        drawTriangle = false; // Adicionado
     }
     
     for (TextBox t : textboxes) {
@@ -159,6 +210,8 @@ public void mousePressed() {
     if (mouseY < height - 150) {
         if (drawCircle) {
             drawCircle();
+        } else if (drawTriangle) { // Adicionado
+            drawTriangle();
         } else {
             drawSquare();
         }
@@ -268,4 +321,51 @@ private void plotPoints(int centerX, int centerY, int x, int y) {
     point(centerX - y, centerY + x);
     point(centerX + y, centerY - x);
     point(centerX - y, centerY - x);
+}
+
+private void drawTriangle() {
+    int size = int(sizeTriangle.Text);
+    if (size <= 0) return; // Proteção contra tamanho inválido
+    
+    // Calcula os três pontos do triângulo equilátero
+    int x1 = mouseX;
+    int y1 = mouseY - size;
+    int x2 = mouseX - size;
+    int y2 = mouseY + size;
+    int x3 = mouseX + size;
+    int y3 = mouseY + size;
+    
+    // Define a cor do triângulo
+    color triColor = color(int(rTriangle.Text), int(gTriangle.Text), int(bTriangle.Text));
+    int thickness = max(1, int(strokeTriangle.Text));
+    
+    // Desenha as três linhas com a espessura correta
+    drawTriangleLine(x1, y1, x2, y2, triColor, thickness);
+    drawTriangleLine(x2, y2, x3, y3, triColor, thickness);
+    drawTriangleLine(x3, y3, x1, y1, triColor, thickness);
+}
+
+private void drawTriangleLine(int x1, int y1, int x2, int y2, color lineColor, int thickness) {
+    int halfThickness = thickness / 2;
+    int dx = Math.abs(x2 - x1);
+    int dy = Math.abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
+    
+    while (true) {
+        // Desenha a linha com espessura
+        for (int i = -halfThickness; i <= halfThickness; i++) {
+            for (int j = -halfThickness; j <= halfThickness; j++) {
+                if (i*i + j*j <= halfThickness*halfThickness) {
+                    set(x1 + i, y1 + j, lineColor);
+                }
+            }
+        }
+        
+        if (x1 == x2 && y1 == y2) break;
+        int e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x1 += sx; }
+        if (e2 < dx) { err += dx; y1 += sy; }
+    }
 }
